@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RestWithASP_NET.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,25 +15,28 @@ namespace RestWithASP_NET.Controllers
 
 
         private readonly ILogger<PersonController> _logger;
-
-        public PersonController(ILogger<PersonController> logger)
+        private IPersonService _personService;
+        public PersonController(ILogger<PersonController> logger, IPersonService personService)
         {
             _logger = logger;
+            _personService = personService;
         }
 
-        [HttpGet ("sum/{firstNumber}/{secondNumber}")]
-        public IActionResult Sum(string firstNumber, string secondNumber)
+        [HttpGet]
+        public IActionResult Get()
         {
-            if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
-            {
-                var sum = ConvertToDecimal(firstNumber) + ConvertToDecimal(secondNumber);
-                return Ok(sum.ToString());
-            }
-
-            return BadRequest("Invalid Input");
+    
+            return Ok(_personService.FindAll());
         }
 
-        
+        [HttpGet("{id}")]
+        public IActionResult Get(long id)
+        {
+
+            return Ok(_personService.FindByID(id));
+        }
+
+
 
         private bool IsNumeric(string strNumber)
         {
