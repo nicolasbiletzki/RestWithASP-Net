@@ -36,6 +36,9 @@ namespace RestWithASP_NET
 
             services.AddDbContext<MySqlContext>(options => options.UseMySql(connection));
 
+            //Versioning Api
+            services.AddApiVersioning();
+
             //Depedency Injection
             services.AddScoped<IPersonService, PersonServiceImplementation>();
         }
