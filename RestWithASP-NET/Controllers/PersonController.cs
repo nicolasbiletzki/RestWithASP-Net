@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RestWithASP_NET.Model;
 using RestWithASP_NET.Services;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace RestWithASP_NET.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PersonController : ControllerBase
     {
 
@@ -32,36 +33,46 @@ namespace RestWithASP_NET.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(long id)
         {
+            var person = _personService.FindByID(id);
 
-            return Ok(_personService.FindByID(id));
+            if (person == null) return NotFound();
+
+            return Ok(person);
         }
-
-
-
-        private bool IsNumeric(string strNumber)
-        {
-            double number;
-
-
-            bool isNumber = double.TryParse(strNumber
-                , System.Globalization.NumberStyles.Any
-                , System.Globalization.NumberFormatInfo.InvariantInfo,
-                out number);
-
-            return isNumber;
-
-        }
-
-        private decimal ConvertToDecimal(string strNumber)
-        {
-            decimal decimalValue;
-            if(decimal.TryParse(strNumber, out decimalValue))
-            {
-                return decimalValue;
-            }
-            return 0;
-        }
-
         
+        [HttpPost]
+        public IActionResult Post([FromBody] Person person)
+        {
+            
+            if (person == null) return BadRequest();
+
+            return Ok(_personService.Create(person));
+        }      
+        
+
+        [HttpPut]
+        public IActionResult Put([FromBody] Person person)
+        {
+            
+            if (person == null) return BadRequest();
+
+            return Ok(_personService.Update(person));
+        }
+
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(long id)
+        {
+            _personService.Delete(id);
+
+            return NoContent();
+        }
+
+
+
+
+
+
+
     }
 }
